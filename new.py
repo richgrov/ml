@@ -98,7 +98,7 @@ def cost(expected, actual):
 def cost_derivative(expected, actual):
   return (expected - actual) * 2
 
-for epoch in range(epochs):
+for epoch in range(1, epochs + 1):
   total_loss = 0
   for entry in dataset:
     a = normalize(entry['x'])
