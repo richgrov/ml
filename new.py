@@ -120,7 +120,7 @@ for epoch in range(1, epochs + 1):
     print(f"epoch {epoch}/{epochs}, loss {average_loss}")
 
 while True:
-  a = normalize(float(input()))
-  b = normalize(float(input()))
-  c = unnormalize(forward(a, b))
-  print(c)
+  a = float(input())
+  b = float(input())
+  c = unnormalize(forward(normalize(a), normalize(b)))
+  print(f"predicted = {c}, actual = {math.hypot(a, b)}")
