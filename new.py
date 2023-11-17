@@ -73,18 +73,28 @@ def sigmoid(n):
 def sigmoid_derivative(n):
   return sigmoid(n) * (1 - sigmoid(n))
 
-inputs = Layer(2, 3, sigmoid, sigmoid_derivative)
-hidden1 = Layer(3, 3, sigmoid, sigmoid_derivative)
-hidden2 = Layer(3, 1, sigmoid, sigmoid_derivative)
+layers = [
+  Layer(2, 8, relu, relu_derivative),
+  #Layer(4, 4, relu, relu_derivative),
+  Layer(8, 1, relu, relu_derivative),
+]
 
 def forward(a, b):
-  results1 = inputs.forward([a, b])
-  results2 = hidden1.forward(results1)
-  results3 = hidden2.forward(results2)
-  return results3[0]
+  results = [a, b]
+  for layer in layers:
+    results = layer.forward(results)
+  return results[0]
 
-learning_rate = 0.005
-epochs = 10000
+def backward(gradient, learning_rate):
+  layers[-1].backward(gradient, learning_rate)
+  previous_layer = layers[-1]
+
+  for i in range(2, len(layers) + 1):
+    layers[-i].backward_from(learning_rate, previous_layer)
+    previous_layer = layers[-i]
+
+learning_rate = 0.002
+epochs = 1000
 
 def normalize(side_length):
   return side_length / 20
@@ -110,10 +120,7 @@ for epoch in range(1, epochs + 1):
     total_loss += loss
 
     gradient = cost_derivative(output, c)
-    
-    hidden2.backward(gradient, learning_rate)
-    hidden1.backward_from(learning_rate, hidden2)
-    inputs.backward_from(learning_rate, hidden1)
+    backward(learning_rate, gradient)
 
   if epoch % 100 == 0:
     average_loss = total_loss / len(dataset)
