@@ -2,8 +2,8 @@ import math
 import random
 
 dataset = []
-for x in range(1, 50):
-  for y in range(1, 50):
+for x in range(1, 20):
+  for y in range(1, 20):
     dataset.append({'x': x, 'y': y, 'hypot': math.hypot(x, y)})
 
 class Layer:
@@ -87,10 +87,10 @@ learning_rate = 0.005
 epochs = 10000
 
 def normalize(side_length):
-  return side_length / 50
+  return side_length / 20
 
 def unnormalize(normalized):
-  return normalized * 50
+  return normalized * 20
 
 def cost(expected, actual):
   return (expected - actual) ** 2
