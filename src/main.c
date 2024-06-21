@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <time.h>
 
-#include "activation.h"
+#include "cost.h"
 #include "linear.h"
 #include "rand.h"
 
