@@ -13,6 +13,32 @@ typedef struct {
     double output;
 } Datapoint;
 
+typedef struct {
+    Linear linear;
+} Model;
+
+void model_init(Model *model) {
+    linear_init(&model->linear, 2, 1);
+}
+
+void model_randinit(Model *model) {
+    linear_randinit(&model->linear, 0.0, 1.0);
+    model->linear.biases[0] = 0.0;
+}
+
+double model_forward(Model *model, Datapoint *data) {
+    linear_forward(&model->linear, data->input);
+    return model->linear.outputs[0];
+}
+
+void model_backward(Model *model, double cost_gradient, double *inputs, double lr) {
+    linear_backward(&model->linear, inputs, &cost_gradient, lr);
+}
+
+void model_deinit(Model *model) {
+    linear_deinit(&model->linear);
+}
+
 int main(int argc, char **argv) {
     srand(time(NULL));
 
@@ -25,21 +51,20 @@ int main(int argc, char **argv) {
         dataset[i] = e;
     }
 
-    Linear linear;
-    linear_init(&linear, 2, 1);
-    linear_randinit(&linear, 0.0, 1.0);
-    linear.biases[0] = 0.0;
+    Model model;
+    model_init(&model);
+    model_randinit(&model);
 
     for (int i = 0; i < ARRAY_LEN(dataset); ++i) {
         Datapoint *entry = &dataset[i];
-        linear_forward(&linear, entry->input);
-        double out = linear.outputs[0];
-        double cost = mse(out, entry->output);
+        double out = model_forward(&model, entry);
 
-        double activation_gradient = mse_derivative(out, entry->output);
-        linear_backward(&linear, entry->input, &activation_gradient, 0.1);
+        double cost = mse(out, entry->output);
+        double cost_gradient = mse_derivative(out, entry->output);
+
+        model_backward(&model, cost_gradient, entry->input, 0.1);
         printf("avg(%f, %f) is about %f (cost %f)\n", entry->input[0], entry->input[1], out, cost);
     }
 
-    linear_deinit(&linear);
+    model_deinit(&model);
 }
