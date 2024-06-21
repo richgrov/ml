@@ -23,7 +23,6 @@ void model_init(Model *model) {
 
 void model_randinit(Model *model) {
     linear_randinit(&model->linear, 0.0, 1.0);
-    model->linear.biases[0] = 0.0;
 }
 
 double model_forward(Model *model, Datapoint *data) {

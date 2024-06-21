@@ -46,5 +46,7 @@ void linear_backward(Linear *linear, double *inputs, double *output_gradients, d
             double gradient = inputs[in] * output_gradients[out];
             linear->weights[this_weight] -= gradient * lr;
         }
+
+        linear->biases[out] -= lr * output_gradients[out];
     }
 }
