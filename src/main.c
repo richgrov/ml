@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <time.h>
 
+#include "activation.h"
 #include "cost.h"
 #include "linear.h"
 #include "rand.h"
@@ -22,16 +23,17 @@ void model_init(Model *model) {
 }
 
 void model_randinit(Model *model) {
-    linear_randinit(&model->linear, 0.0, 1.0);
+    linear_randinit(&model->linear, -1.0, 1.0);
 }
 
 double model_forward(Model *model, Datapoint *data) {
     linear_forward(&model->linear, data->input);
-    return model->linear.outputs[0];
+    return sigmoid(model->linear.outputs[0]);
 }
 
 void model_backward(Model *model, double cost_gradient, double *inputs, double lr) {
-    linear_backward(&model->linear, inputs, &cost_gradient, lr);
+    double activation_gradient = sigmoid_derivative(model->linear.outputs[0]) * cost_gradient;
+    linear_backward(&model->linear, inputs, &activation_gradient, lr);
 }
 
 void model_deinit(Model *model) {
@@ -46,7 +48,7 @@ int main(int argc, char **argv) {
         Datapoint e;
         e.input[0] = rand_double(0.0, 1.0);
         e.input[1] = rand_double(0.0, 1.0);
-        e.output = (e.input[0] + e.input[1]) / 2;
+        e.output = sigmoid((e.input[0] + e.input[1]) / 2);
         dataset[i] = e;
     }
 
