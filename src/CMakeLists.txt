@@ -2,7 +2,7 @@ add_executable(inference
 	"activation.h"
 	"linear.c"
 	"linear.h"
-	"main.c"
+	"main.cu"
 	"rand.h"
 )
 
